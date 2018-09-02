@@ -1,3 +1,4 @@
+const {generateMessage} = require('./utils/message.js');
 const express = require('express');
 const path = require('path');
 const http = require('http');
@@ -12,15 +13,16 @@ app.use(express.static(publicpath));
 io.on('connection',(socket) =>
 {
   console.log("user connected");
-  socket.emit('message',{
-    from : 'sdvfsd',
-    text : 'shs',
-    createdAt : 324
-  })
-  socket.on('new mail',(mail) =>
+socket.emit('newmessage',generateMessage("adsf","new joined"));
+socket.broadcast.emit('newmessage',generateMessage("vcnvb","user joined"))
+  socket.on('createmessage',(message,callback) =>
   {
-    console.log('new  mail',mail);
-  })
+
+    console.log('createmessage',message);
+    io.emit('newmessage',generateMessage(message.from,message.text));
+    callback();
+  });
+
   socket.on('disconnect',() =>
 {
   console.log('disconnected yup');
