@@ -1,4 +1,4 @@
-const {generateMessage} = require('./utils/message.js');
+const {generateMessage,generateLocationMessage} = require('./utils/message.js');
 const express = require('express');
 const path = require('path');
 const http = require('http');
@@ -14,15 +14,18 @@ io.on('connection',(socket) =>
 {
   console.log("user connected");
 socket.emit('newmessage',generateMessage("adsf","new joined"));
-socket.broadcast.emit('newmessage',generateMessage("vcnvb","user joined"))
-  socket.on('createmessage',(message,callback) =>
+socket.broadcast.emit('newmessage',generateMessage("vcnvb","user joined"));
+  socket.on('createmessage',(message) =>
   {
 
     console.log('createmessage',message);
     io.emit('newmessage',generateMessage(message.from,message.text));
-    callback();
   });
-
+socket.on('createlocationmessage',(coords) =>
+{
+  console.log(coords);
+  io.emit('newlocationmessage',generateLocationMessage('admin',coords.latitude,coords.longitude));
+})
   socket.on('disconnect',() =>
 {
   console.log('disconnected yup');
